@@ -1124,12 +1124,25 @@ static void check_variables(void)
   environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
   {
     orig_value = config.ym3438;
-    if (!strcmp(var.value, "nuked opn2"))
+    if (!strcmp(var.value, "nuked (ym2612)"))
+    {
+      OPN2_SetChipType(ym3438_type_ym2612);
       config.ym3438 = 1;
+    }
+    else if (!strcmp(var.value, "nuked (asic ym3438)"))
+    {
+      OPN2_SetChipType(ym3438_type_asic);
+      config.ym3438 = 2;
+    }
+    else if (!strcmp(var.value, "nuked (discrete ym3438)"))
+    {
+      OPN2_SetChipType(ym3438_type_discrete);
+      config.ym3438 = 3;
+    }
     else
       config.ym3438 = 0;
 
-    if (orig_value != config.ym3438)
+    if (orig_value == 0 && config.ym3438 > 0 || orig_value > 0 && config.ym3438 == 0)
     {
       sound_init();
       sound_reset();
@@ -1704,11 +1717,11 @@ void retro_set_environment(retro_environment_t cb)
       { "genesis_plus_gx_ym2413", "Master System FM; auto|disabled|enabled" },
       { "genesis_plus_gx_dac_bits", "YM2612 DAC quantization; disabled|enabled" },
       #ifdef HAVE_YM3438_CORE
-      { "genesis_plus_gx_ym3438", "YM2612/YM3438 core; mame|nuked opn2" },
+      { "genesis_plus_gx_ym3438", "YM2612/YM3438 core; mame|nuked (ym2612)|nuked (asic ym3438)|nuked (discrete ym3438)" },
       #endif
 
+      { "genesis_plus_gx_sound_output", "Sound output; stereo|mono" },
       { "genesis_plus_gx_audio_filter", "Audio filter; disabled|low-pass" },
-      { "genesis_plus_gx_sound_output", "Sound output; stereo|mono" }, 
       { "genesis_plus_gx_lowpass_range", "Low-pass filter %; 60|65|70|75|80|85|90|95|5|10|15|20|25|30|35|40|45|50|55"},
       
       #if HAVE_EQ     
